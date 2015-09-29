@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "compile": "rm -rf ./dist/bundle.* && node ./node_modules/.bin/webpack --config config/webpack/compile.js",
+    "dev": "node ./node_modules/.bin/webpack-dev-server --config config/webpack/devServer.js",
+    "dev-hot": "node ./node_modules/.bin/webpack-dev-server --config config/webpack/hotServer.js --hot",
+    "app": "node index.js"
+  },
+  "dependencies": {
+    "es6-promise": "^3.0.2",
+    "isomorphic-fetch": "^2.1.1",
+    "react": "^0.14.0-rc1",
+    "react-dom": "^0.14.0-rc1"
+  }
+}
