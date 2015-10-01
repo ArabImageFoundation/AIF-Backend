@@ -5,3 +5,5 @@ http://chrispearce.co/elephants-the-three-code-ilities-two-months-with-css-modul
 https://medium.com/seek-ui-engineering/the-end-of-global-css-90d2a4a06284
 
 https://github.com/jarsbe/isomorphic-local-css
+
+add invalidation to directories
