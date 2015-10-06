@@ -2,7 +2,7 @@
 import domReady from 'domready';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Browser from '../lib/Browser2';
+import Browser from '../lib/Browser';
 
 domReady(function ready(){
 	let node = document.getElementById('Wrapper');
