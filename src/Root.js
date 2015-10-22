@@ -1,0 +1,20 @@
+import React, {Component} from 'react'
+import {Provider} from 'react-redux';
+import {configureStore} from './reducers/configureStore';
+import Browser from './components';
+import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
+
+const store = configureStore(window.__INITIAL_STATE__);
+
+export default class Root extends Component{
+	render(){
+		return (<div style={{width:'100%',height:'100%'}}>
+			<Provider store={store}>
+				<Browser />
+			</Provider>
+			{this.props.debug ? <DebugPanel top right bottom>
+					<DevTools store={store} monitor={LogMonitor}/>
+				</DebugPanel>:false}
+		</div>);
+	}
+};

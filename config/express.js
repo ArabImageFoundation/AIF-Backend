@@ -1,22 +1,40 @@
-var directories = require('./directories');
-var express = require('express');
-var publicPath = directories.public;
-var viewsPath = directories.views;
-var fileBrowser = require('./fileBrowser');
+import directories from './directories';
+import fileBrowser from './fileBrowser';
+import infoServer from 'infoserver';
+import rethinkdb from './rethinkdb';
+import webpackDevMiddleware from './webpack/devMiddleware';
+import express,{static as staticServer} from 'express';
+import loki from './loki';
+import {middleware as stylusMiddleware} from 'stylus'
+import Promise from 'bluebird';
 
-var appSettings = {
-	port:process.env.PORT || 3000
+const app = express();
+const publicPath = directories.public;
+const viewsPath = directories.views;
+const port = process.env.PORT || 3000;
+
+const appSettings = {
+	port
 ,	views:viewsPath
 ,	'view engine':'jade'
 }
 
-var settings = {
-	app:appSettings
-,	stylus:require('stylus').middleware(publicPath)
-,	static:express.static(publicPath)
+const props = {
+	app
+,	port
+,	webpackDevMiddleware
+,	stylus:stylusMiddleware(publicPath)
+,	staticServer:staticServer(publicPath)
+,	directories:directories
+,	serve:Promise.promisify(function serve(cb){
+		const server = app.listen(port,function(){
+			props.server = server;
+			cb(null,props);
+		})
+	})
 ,	fileBrowser:fileBrowser
 ,	notFound:function(req, res, next) {
-		var err = new Error('Not Found');
+		const err = new Error('Not Found');
 		err.status = 404;
 		next(err);
 	}
@@ -28,18 +46,25 @@ var settings = {
 		,	path:err.path
 		});
 	}
-,	setApp:function(app){
-		for(var n in appSettings){
-			if(!appSettings.hasOwnProperty(n)){continue;}
-			app.set(n,appSettings[n]);
-		}
-	}
-,	directories:directories
-,	serve:function(app){
-		return app.listen(appSettings.port,function(){
-			console.log('Express server listening on port '+appSettings.port);
-		})
-	}
 }
 
-module.exports = settings
+export default function(cb){
+
+	Object.keys(appSettings).forEach(n=>{
+		app.set(n,appSettings[n]);
+	});
+
+	/**
+	return rethinkdb()
+		.then(rethinkdb=>{
+			props.rethinkdb = rethinkdb;
+		})
+		.then(()=>
+	**/
+	return infoServer(publicPath,{})
+		//)
+		.then(api=>{
+			props.infoServer = api;
+			return props;
+		})
+}

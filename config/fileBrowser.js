@@ -1,5 +1,5 @@
-var directories = require('./directories')
+import directories from './directories';
 
-module.exports = {
+export default {
 	root:directories.public
 }

@@ -11,7 +11,7 @@ var srcDir = directories.src;
 module.exports = {
 	context: rootDir
 ,	entry: {
-		bundle: srcDir+"index.js"
+		bundle: [srcDir+"client.js"]
 	}
 ,	output: {
 		path: distDir
@@ -43,13 +43,7 @@ module.exports = {
 			{
 				test: /\.js$/
 			,	exclude: /node_modules/
-			,	loader: "babel-loader"
-			,	query: {
-					optional: [
-						"es7.decorators"
-					,	"es7.classProperties"
-					]
-				}
+			,	loaders: ["babel-loader?optional[]=es7.decorators&optional[]=es7.classProperties"]
 			}
 		,	{
 				test: /\.styl$/
