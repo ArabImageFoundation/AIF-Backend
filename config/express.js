@@ -1,10 +1,7 @@
 import directories from './directories';
-import fileBrowser from './fileBrowser';
 import infoServer from 'infoserver';
-import rethinkdb from './rethinkdb';
 import webpackDevMiddleware from './webpack/devMiddleware';
 import express,{static as staticServer} from 'express';
-import loki from './loki';
 import {middleware as stylusMiddleware} from 'stylus'
 import Promise from 'bluebird';
 
@@ -32,7 +29,6 @@ const props = {
 			cb(null,props);
 		})
 	})
-,	fileBrowser:fileBrowser
 ,	notFound:function(req, res, next) {
 		const err = new Error('Not Found');
 		err.status = 404;
@@ -54,15 +50,7 @@ export default function(cb){
 		app.set(n,appSettings[n]);
 	});
 
-	/**
-	return rethinkdb()
-		.then(rethinkdb=>{
-			props.rethinkdb = rethinkdb;
-		})
-		.then(()=>
-	**/
 	return infoServer(publicPath,{})
-		//)
 		.then(api=>{
 			props.infoServer = api;
 			return props;

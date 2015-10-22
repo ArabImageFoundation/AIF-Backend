@@ -1,10 +1,8 @@
 import setApp from './config/express'
-//import rethinkFactory from './src/rethink';
 
 setApp()
 	.then(({
 			app
-		//,	rethinkdb
 		,	infoServer
 		,	serve
 		,	stylus
@@ -21,11 +19,9 @@ setApp()
 		});
 
 		app.use('/browse',infoServer.middleware)
-		//app.use('/browse',require('./middleware/fileBrowser')(fileBrowser))
 		
 		webpackDevMiddleware(app);
 		
-		//app.use('/meta',rethinkFactory(rethinkdb))
 		app.use(staticServer);
 		app.use(notFound);
 		app.use(errorHandler);
