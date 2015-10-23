@@ -14,14 +14,15 @@ export function mapStateToProps({
 ,	api
 ,	info
 ,	groups
+,	mode
 }){
 	const {files,indexes} = api;
 	const {groupsData,groupsIndexes} = groups;
 	const _columns = columns.map(column=>mapColumnToPaths(column,files,indexes));
-	const {marked,selected} = collectMarkedOrSelectedItems(_columns)
 	return {
 		columns:_columns
-	,	info:{marked,selected}
-	,	groups:mapGroups(groupsData,groupsIndexes,files,indexes)
+	,	info:collectMarkedOrSelectedItems(_columns)
+	,	groups:groups.groups//:mapGroups(groupsData,groupsIndexes,files,indexes)
+	,	mode
 	}
 }

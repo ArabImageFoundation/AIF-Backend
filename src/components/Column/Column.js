@@ -12,11 +12,13 @@ import DirectoryColumn from './DirectoryColumn';
 import FirstColumn from './FirstColumn';
 import ErrorColumn from './ErrorColumn';
 import FileColumn from './FileColumn';
+import GroupColumn from './GroupColumn';
 
 const map = {
 	[TYPE_DIRECTORY]:DirectoryColumn
 ,	[TYPE_FIRST]:FirstColumn
 ,	[TYPE_FILE]:FileColumn
+,	[TYPE_GROUP]:GroupColumn
 }
 
 export default class Column extends Component{
@@ -40,7 +42,8 @@ export default class Column extends Component{
 		const {type} = this.props;
 		const Component = map[type] || ErrorColumn;
 		const onClick = this.onClick;
-		const props = Object.assign({},this.props,{onClick})
-		return <Component {...this.props}/>
+		const name = (this.props.name || this.props.path || '').replace(/^\/|\/$/g,'').split('/').pop();
+		const props = Object.assign({},this.props,{name})
+		return <Component {...props}/>
 	}
 }

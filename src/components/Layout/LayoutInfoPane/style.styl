@@ -3,4 +3,61 @@
 	float left
 	position absolute
 	right 0
+	box-sizing border-box
 	transition right .3s ease-out
+	background #6E6E6E
+	box-shadow -2px 0px 6px rgba(0,0,0,.5)
+
+.input
+	width 100%
+	padding .1em
+	box-sizing border-box
+	border 0
+	
+.LayoutInfoPaneInner
+	box-sizing border-box
+	position absolute
+	bottom 1em
+	top 1em
+	left 1em
+	right 1em
+	background green
+	overflow auto
+
+.LayoutInfoPaneImagesContainer
+	float left
+	clear both
+	width 100%
+	
+.LayoutInfoPaneImage
+	display block
+	width 4em
+	height 4em
+	float left
+	background-repeat no-repeat
+	overflow hidden
+	background-size cover
+	background-position center
+	
+.group
+	background #2F94FF
+	display inline-block
+	float left
+	color #fdfdfd
+	border-radius 1em
+	padding .3em
+	a
+		border-radius 1em
+		width 1em
+		height 1em
+		text-align center
+		display inline-block
+		color #fdfdfd
+		text-decoration none
+	&:hover
+		a
+			background orange
+			&:hover
+				background #fdfdfd
+				color #2F94FF
+		

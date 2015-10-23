@@ -1,7 +1,12 @@
+gradientColor1 = #151617
+gradientColor2 = #0F0F10
+gradientSize = 5em
+gradientAngle = -45deg
+
 .LayoutContainer
 	width 100%
 	height 100%
-	background red
+	background: repeating-linear-gradient(gradientAngle,gradientColor1,gradientColor1 gradientSize,gradientColor2 gradientSize,gradientColor2 (gradientSize * 2));
 	position relative
 	overflow hidden
 	&:after

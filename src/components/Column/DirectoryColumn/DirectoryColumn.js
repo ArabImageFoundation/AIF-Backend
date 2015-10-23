@@ -1,6 +1,6 @@
 import React,{Component,PropTypes} from 'react';
 import {fetchDirectoryIfNeeded,filterColumn} from '../../../actions';
-import {STATUS_ERROR} from '../../../constants/statuses';
+import {STATUS_ERROR,STATUS_LOADING} from '../../../constants/statuses';
 
 import {
 	LayoutColumn
@@ -44,6 +44,8 @@ export default class DirectoryColumn extends Component{
 		,	id
 		,	filter
 		,	status
+		,	showFilter
+		,	name
 		} = this.props;
 		const headerHeight = getHeaderHeight(height);
 		const props = {
@@ -53,15 +55,17 @@ export default class DirectoryColumn extends Component{
 		if(status == STATUS_ERROR){
 			return (<LayoutColumn {...props}>Error!</LayoutColumn>)
 		}
+		const headerProps = {
+			height:headerHeight
+		,	closeColumn:id!=0?this.closeColumn:null
+		,	filter
+		,	onChange:this.onFilter
+		,	showFilter:true
+		}
 		return(<LayoutColumn {...props}>
-			<LayoutColumnHeader height={headerHeight} closeColumn={id!=0?this.closeColumn:null}>
-			{path}
-			<input value={filter} onChange={this.onFilter} type="text"/>
-			</LayoutColumnHeader>
+			<LayoutColumnHeader {...headerProps}>{name}/{filter?`[${filter}]`:''}</LayoutColumnHeader>
 			<LayoutColumnItems height={height-headerHeight} position={headerHeight}>
-				{this.renderItems(items)}
-				{this.renderItems(items)}
-				{this.renderItems(items)}
+				{status == STATUS_LOADING ? <div>loading...</div> : this.renderItems(items)}
 			</LayoutColumnItems>
 		</LayoutColumn>)
 	}

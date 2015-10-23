@@ -18,6 +18,13 @@ import {
 ,	REQUEST_FILE
 ,	REQUEST_FILE_CONTENTS
 ,	ERROR_FETCHING
+,	COLUMN_FILTER_ON
+,	COLUMN_FILTER_OFF
+,	ROOT_GROUPS_FETCHED
+,	RECEIVE_GROUP
+,	REQUEST_GROUP
+,	ERROR_FETCHING_GROUP
+,	GROUP_ADDED_TO_ROOT
 } from '../../actions';
 
 import {addColumn} from './addColumn';
@@ -39,6 +46,12 @@ import {selectNextColumn} from './selectNextColumn';
 import {selectNextItemInCurrentColumn} from './selectNextItemInCurrentColumn';
 import {selectPreviousColumn} from './selectPreviousColumn';
 import {selectPreviousItemInCurrentColumn} from './selectPreviousItemInCurrentColumn';
+import {columnFilterOn} from './columnFilterOn';
+import {columnFilterOff} from './columnFilterOff';
+import {receiveGroups} from './receiveGroups';
+import {requestGroup} from './requestGroup';
+import {groupAddedToRoot} from './groupAddedToRoot';
+
 import {defaultState} from './defaults/state'
 
 export function columns(state=defaultState,action){
@@ -46,6 +59,7 @@ export function columns(state=defaultState,action){
 		case ADD_COLUMN:
 			return addColumn(state,action)
 		case ERROR_FETCHING:
+		case ERROR_FETCHING_GROUP:
 			return errorFetching(state,action)
 		case MARK_ITEM:
 			return markItem(state,action)
@@ -81,6 +95,17 @@ export function columns(state=defaultState,action){
 			return selectPreviousItemInCurrentColumn(state,action);
 		case FILTER_COLUMN:
 			return filterColumn(state,action)
+		case COLUMN_FILTER_ON:
+			return columnFilterOn(state,action);
+		case REQUEST_GROUP:
+			return requestGroup(state,action);
+		case COLUMN_FILTER_OFF:
+			return columnFilterOff(state,action);
+		case ROOT_GROUPS_FETCHED:
+		case RECEIVE_GROUP:
+			return receiveGroups(state,action);
+		case GROUP_ADDED_TO_ROOT:
+			return groupAddedToRoot(state,action)
 		default:
 			return state;
 	}

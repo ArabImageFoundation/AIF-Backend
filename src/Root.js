@@ -3,6 +3,7 @@ import {Provider} from 'react-redux';
 import {configureStore} from './reducers/configureStore';
 import Browser from './components';
 import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
+import {isDev} from '../config/global';
 
 const store = configureStore(window.__INITIAL_STATE__);
 
@@ -12,9 +13,9 @@ export default class Root extends Component{
 			<Provider store={store}>
 				<Browser />
 			</Provider>
-			{this.props.debug ? <DebugPanel top right bottom>
-					<DevTools store={store} monitor={LogMonitor}/>
-				</DebugPanel>:false}
+			{isDev ? <DebugPanel top right bottom>
+				<DevTools store={store} monitor={LogMonitor}/>
+			</DebugPanel> : false}
 		</div>);
 	}
 };

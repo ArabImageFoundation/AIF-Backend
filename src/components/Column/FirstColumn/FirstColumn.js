@@ -1,4 +1,5 @@
 import React,{Component,PropTypes} from 'react';
+import {fetchRootGroups} from '../../../actions';
 import {
 	LayoutColumn
 ,	LayoutColumnHeader
@@ -19,6 +20,13 @@ import{
 } from '../../../constants/types';
 
 export default class DirectoryColumn extends Component{
+	componentDidMount(){
+		const {
+			dispatch
+		,	id
+		} = this.props;
+		dispatch(fetchRootGroups(id));
+	}
 	renderItems(items){
 		return (items && items.map((item,key)=>makeItem(item,key,this.props))) || false
 	}

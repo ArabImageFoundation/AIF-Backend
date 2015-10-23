@@ -1,8 +1,11 @@
 import directories from './directories';
 import infoServer from 'infoserver';
+import infoServerOptions from './infoServer';
 import webpackDevMiddleware from './webpack/devMiddleware';
 import express,{static as staticServer} from 'express';
-import {middleware as stylusMiddleware} from 'stylus'
+import stylus,{middleware as stylusMiddleware} from 'stylus'
+import nib from 'nib';
+import {isDev} from './global'
 import Promise from 'bluebird';
 
 const app = express();
@@ -19,8 +22,21 @@ const appSettings = {
 const props = {
 	app
 ,	port
+,	isDev
 ,	webpackDevMiddleware
-,	stylus:stylusMiddleware(publicPath)
+,	stylus:stylusMiddleware({
+		src:publicPath
+	,	sourcemap:isDev
+	,	force:isDev
+	,	compile:(str,path)=>{
+			return stylus(str)
+				.set('filename',path)
+				.set('compress',!isDev)
+				.use(nib())
+				.import('nib')
+				.define('isDev',isDev)
+		}
+	})
 ,	staticServer:staticServer(publicPath)
 ,	directories:directories
 ,	serve:Promise.promisify(function serve(cb){
@@ -50,9 +66,14 @@ export default function(cb){
 		app.set(n,appSettings[n]);
 	});
 
-	return infoServer(publicPath,{})
+	const {path,options,rootGroups} = infoServerOptions;
+	return infoServer(path,options)
 		.then(api=>{
 			props.infoServer = api;
+			if(isDev){
+				return api.selections.commands.root([rootGroups])
+			}
 			return props;
 		})
+		.then(()=>props)
 }

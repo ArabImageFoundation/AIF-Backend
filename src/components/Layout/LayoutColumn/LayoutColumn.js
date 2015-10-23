@@ -20,7 +20,9 @@ export default class LayoutColumn extends Component{
 		,	onClick
 		}
 		return (<div {...props}>
-			{children}
+			<div className={classNames(styles,'LayoutColumnInner')}>
+				{children}
+			</div>
 		</div>)
 	}
 }

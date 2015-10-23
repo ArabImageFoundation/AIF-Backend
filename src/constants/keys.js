@@ -9,21 +9,32 @@ export const KEY_BACK = 109
 export const KEY_TOP = 36
 export const KEY_BOTTOM = 35
 
-export function isKeyValid(key){
-	switch(key){
-		case KEY_LEFT:
-		case KEY_RIGHT:
-		case KEY_UP:
-		case KEY_DOWN:
-		case KEY_CONFIRM:
-		case KEY_CANCEL:
-		case KEY_FORWARD:
-		case KEY_BACK:
-		case KEY_TOP:
-		case KEY_BOTTOM:
-			return true
-		default:
-			break;
-	}
-	return false;
-}
+export const KEY_Q = 81
+export const KEY_W = 87
+export const KEY_E = 69
+export const KEY_R = 82
+export const KEY_T = 84
+export const KEY_Y = 89
+export const KEY_U = 85
+export const KEY_I = 73
+export const KEY_O = 79
+export const KEY_P = 80
+export const KEY_A = 65
+export const KEY_S = 83
+export const KEY_D = 68
+export const KEY_F = 70
+export const KEY_G = 71
+export const KEY_H = 72
+export const KEY_J = 74
+export const KEY_K = 75
+export const KEY_L = 76
+export const KEY_Z = 90
+export const KEY_X = 88
+export const KEY_C = 67
+export const KEY_V = 86
+export const KEY_B = 66
+export const KEY_N = 78
+export const KEY_M = 77
+export const KEY_DOT = 190
+
+export const LETTERS = [KEY_Q,KEY_W,KEY_E,KEY_R,KEY_T,KEY_Y,KEY_U,KEY_I,KEY_O,KEY_P,KEY_A,KEY_S,KEY_D,KEY_F,KEY_G,KEY_H,KEY_J,KEY_K,KEY_L,KEY_Z,KEY_X,KEY_C,KEY_V,KEY_B,KEY_N,KEY_M,KEY_DOT]

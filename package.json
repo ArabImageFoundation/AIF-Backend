@@ -1,9 +1,9 @@
 {
   "scripts": {
-    "compile": "rm -rf ./dist/bundle.* && node ./node_modules/.bin/webpack --config config/webpack/compile.js",
+    "compile": "rm -rf ./public/bundle.* && node ./node_modules/.bin/webpack --config config/webpack/compile.js",
     "dev": "node ./node_modules/.bin/webpack-dev-server --config config/webpack/devServer.js",
     "dev-hot": "node ./node_modules/.bin/webpack-dev-server --config config/webpack/hotServer.js --hot",
-    "app": "node index.js"
+    "app": "DEBUG=infoserver:* node index.js"
   },
   "dependencies": {
     "babel": "^5.8.23",
@@ -32,6 +32,7 @@
     "mime": "^1.3.4",
     "minimatch": "^3.0.0",
     "moment": "^2.10.6",
+    "nib": "^1.1.0",
     "null-loader": "^0.1.1",
     "pg": "^4.4.2",
     "postcss-import": "^7.0.0",

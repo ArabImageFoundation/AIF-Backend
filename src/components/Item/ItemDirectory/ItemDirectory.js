@@ -12,17 +12,6 @@ import {
 } from '../../Layout';
 
 export default class ItemDirectory extends Component{
-	onDoubleClick = (evt) => {
-		evt.preventDefault();
-		const {
-			dispatch
-		,	columnId
-		,	id
-		,	type
-		,	path
-		} = this.props
-		dispatch(runItem(path,columnId,type,null,id));
-	}
 	render(){
 		const {
 			path
@@ -31,6 +20,7 @@ export default class ItemDirectory extends Component{
 		,	marked
 		,	file
 		,	onClick
+		,	onDoubleClick
 		,	name
 		} = this.props;
 		/**
@@ -54,7 +44,7 @@ export default class ItemDirectory extends Component{
 		,	type
 		,	marked
 		,	onClick
-		,	onDoubleClick:this.onDoubleClick
+		,	onDoubleClick
 		}
 		return (<LayoutColumnItem {...props}>
 			{name}/

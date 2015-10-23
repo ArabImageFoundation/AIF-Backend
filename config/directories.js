@@ -6,7 +6,7 @@ module.exports = {
 ,	config:rootDir+'config/'
 ,	public:rootDir+'public/'
 ,	lib:rootDir+'lib/'
-,	dist:rootDir+'dist/'
+,	dist:rootDir+'public/'
 ,	src:rootDir+'src/'
 ,	views:rootDir+'views/'
 }

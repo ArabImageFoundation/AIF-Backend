@@ -18,27 +18,15 @@ export default class ItemGroup extends Component{
 		,	selected
 		,	marked
 		,	file
+		,	onClick
+		,	onDoubleClick
 		} = this.props;
-		const {
-			atime
-		,	basename
-		,	birthtime
-		,	dirname
-		,	extension
-		,	filename
-		,	isDirectory
-		,	isFile
-		,	mime
-		,	size
-		,	status
-		,	types
-		} = file;
 		const props = {
 			selected
 		,	type
 		,	marked
-		,	onClick:this.onClick
-		,	onDoubleClick:this.onDoubleClick
+		,	onClick
+		,	onDoubleClick
 		}
 		return (<LayoutColumnItem {...props}>
 			{path}

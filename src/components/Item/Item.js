@@ -1,5 +1,5 @@
 import React,{Component,PropTypes} from 'react';
-import {selectItem,markItem} from '../../actions';
+import {selectItem,markItem,runItem} from '../../actions';
 
 import ItemDirectory from './ItemDirectory';
 import ItemGroup from './ItemGroup';
@@ -21,6 +21,17 @@ const map = {
 }
 
 export default class Item extends Component{
+	onDoubleClick = (evt) => {
+		evt.preventDefault();
+		const {
+			dispatch
+		,	columnId
+		,	id
+		,	type
+		,	path
+		} = this.props
+		dispatch(runItem(path,columnId,type,null,id));
+	}
 	onClick = (evt) => {
 		evt.preventDefault();
 		const ctrl = evt.ctrlKey;
@@ -39,9 +50,9 @@ export default class Item extends Component{
 	render(){
 		const {type} = this.props;
 		const Component = map[type] || ItemUnknown;
-		const onClick = this.onClick;
-		const name = this.props.name || this.props.path
-		const props = Object.assign({},this.props,{onClick,name});
+		const {onClick,onDoubleClick} = this;
+		const name = (this.props.name || this.props.path || '').replace(/^\/|\/$/g,'').split('/').pop();
+		const props = Object.assign({},this.props,{onClick,onDoubleClick,name});
 		return (<Component {...props}/>)
 	}
 }

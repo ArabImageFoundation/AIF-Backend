@@ -10,18 +10,24 @@ setApp()
 		,	notFound
 		,	errorHandler
 		,	webpackDevMiddleware
+		,	isDev
 		})=>{
 
 		app.use(stylus);
 
 		app.get('/',(req,res)=>{
-		    res.render('index',{title: 'InfoServer Express Example'});
+		    res.render('index',{
+		    	title: 'FAI'
+		    ,	isDev
+		    });
 		});
 
 		app.use('/browse',infoServer.middleware)
 		
-		webpackDevMiddleware(app);
-		
+		//if(isDev){
+			webpackDevMiddleware(app);
+		//}
+
 		app.use(staticServer);
 		app.use(notFound);
 		app.use(errorHandler);

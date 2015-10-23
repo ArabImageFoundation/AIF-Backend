@@ -1,0 +1,101 @@
+.Overlay
+	width 100%
+	height 100%
+	position absolute
+	top -100%
+	overflow hidden
+	left 0
+	background-color rgba(#262626,.8)
+	transition top .4s ease-in
+.showOverlay
+	top 0
+		
+.OverlayImage
+	position absolute
+	top 3em
+	left 3em
+	bottom 3em
+	right 3em
+	background-repeat no-repeat
+	background-size contain
+	background-position center
+	
+.field
+	padding .3em
+	background #6C6C6C
+	label
+		display inline-block
+		width 7em
+	input
+		border none
+		padding .3em
+		background #7D7272
+		&:focus
+			background #fdfdfd
+	&:nth-child(odd)
+		background #5B5A5A
+		
+
+.OverlayEditor
+	position absolute
+	width 100%
+	height 100%
+	box-sizing border-box
+	margin 0 auto
+	padding-bottom 8em
+	bottom -100%
+	transition bottom .3s ease-out
+	
+.show
+	bottom -5em
+	
+.OverlayEditorInner
+	background #4C4C4C
+	width 30em
+	margin 0 auto
+	position relative
+	box-sizing border-box
+	padding 2em
+
+
+.OverlayEditorTitle
+	width 100%
+	left 0
+	text-decoration none
+	display block
+	position absolute
+	top -2em
+	height 2em
+	line-height 2em
+	background #1F1F1F
+	color #fdfdfd
+	width 100%
+	text-align center
+
+.close,.next,.previous
+	position absolute
+	width 1em
+	height 1em
+	font-size 2em
+	color #fdfdfd
+	text-shadow 1px 1px 6px rgba(0,0,0,1)
+	cursor pointer
+	
+.close
+	top .3em
+	right .3em
+	&:before
+		content '✖'
+
+.next,.previous
+	bottom 3em
+	
+.next
+	right .3em
+	&:before
+		content '▶'
+		
+.previous
+	left .3em
+	&:before
+		content '◀'

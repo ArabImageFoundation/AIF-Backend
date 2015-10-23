@@ -6,6 +6,8 @@ import {
 ,	REQUEST_FILE
 ,	REQUEST_FILE_CONTENTS
 ,	ERROR_FETCHING
+,	FILES_ADDED_TO_GROUP
+,	FILES_REMOVED_FROM_GROUP
 } from '../../actions';
 
 import {errorFetching} from './errorFetching';
@@ -16,6 +18,8 @@ import {requestDirectory} from './requestDirectory';
 import {requestFile} from './requestFile';
 import {requestFileContents} from './requestFileContents';
 import {defaultState} from './defaults/state'
+import {filesAddedToGroup} from './filesAddedToGroup';
+import {filesRemovedFromGroup} from './filesRemovedFromGroup';
 
 export function api(state=defaultState,action){
 	switch(action.type){
@@ -33,6 +37,10 @@ export function api(state=defaultState,action){
 			return requestFile(state,action)
 		case REQUEST_FILE_CONTENTS:
 			return requestFileContents(state,action)
+		case FILES_ADDED_TO_GROUP:
+			return filesAddedToGroup(state,action)
+		case FILES_REMOVED_FROM_GROUP:
+			return filesRemovedFromGroup(state,action)
 		default:
 			return state;
 	}

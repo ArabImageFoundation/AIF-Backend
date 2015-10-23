@@ -16,4 +16,5 @@ export const defaultColumn = {
 ,	focused:false
 ,	nextPath:false
 ,	filter:''
+,	showFilter:false
 } 

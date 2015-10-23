@@ -1,0 +1,4 @@
+export const MODE_COLUMNS = 'MODE_COLUMNS'
+export const MODE_COLUMN_FILTER = 'MODE_COLUMN_FILTER'
+export const MODE_OVERLAY = 'MODE_OVERLAY'
+

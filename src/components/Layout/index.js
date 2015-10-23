@@ -5,6 +5,8 @@ import LayoutColumnItem from './LayoutColumnItem';
 import LayoutColumns from './LayoutColumns';
 import LayoutContainer from './LayoutContainer';
 import LayoutInfoPane from './LayoutInfoPane';
+import LayoutInfoPaneContainer from './LayoutInfoPaneContainer';
+import Overlay from './Overlay';
 
 export default {
 	LayoutColumn
@@ -14,4 +16,6 @@ export default {
 ,	LayoutColumns
 ,	LayoutContainer
 ,	LayoutInfoPane
+,	LayoutInfoPaneContainer
+,	Overlay
 }

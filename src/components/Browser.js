@@ -10,31 +10,10 @@ import {
 ,	LayoutColumnItem
 ,	LayoutColumns
 ,	LayoutContainer
-,	LayoutInfoPane
+,	LayoutInfoPaneContainer
+,	Overlay
 } from './Layout';
-import {
-	KEY_LEFT
-,	KEY_RIGHT
-,	KEY_UP
-,	KEY_DOWN
-,	KEY_CONFIRM
-,	KEY_CANCEL
-,	KEY_FORWARD
-,	KEY_BACK
-,	KEY_TOP
-,	KEY_BOTTOM
-} from '../constants'
-import {
-	selectNextColumn
-,	selectPreviousColumn
-,	markItem
-,	markNextItem
-,	markPreviousItem
-,	selectItem
-,	selectNextItem
-,	selectPreviousItem
-} from '../actions'
-
+import keyHandler from './keyHandler';
 
 function layoutProps(
 	{width,height,infoPaneWidth,infoPanePosition}
@@ -60,27 +39,8 @@ class Browser extends Component{
 		}
 	}
 	handleKeyDown = (evt) =>{
-		const {dispatch} = this.props;
-		switch(evt.keyCode){
-			case KEY_LEFT:
-				return dispatch(selectPreviousColumn())
-			case KEY_RIGHT:
-				return dispatch(selectNextColumn())
-			case KEY_UP:
-				return dispatch(selectPreviousItem())
-			case KEY_DOWN:
-				return dispatch(selectNextItem())
-			case KEY_CONFIRM:
-			case KEY_CANCEL:
-			case KEY_FORWARD:
-			case KEY_BACK:
-			case KEY_TOP:
-			case KEY_BOTTOM:
-				return true
-			default:
-				break;
-		}
-		console.log(evt.keyCode)
+		const {dispatch,mode} = this.props;
+		//keyHandler(dispatch,evt,mode)
 	}
 	toggleInfoBox = (evt) =>{
 		evt.preventDefault();
@@ -101,7 +61,13 @@ class Browser extends Component{
 		this.setState({width,height});
 	}
 	render(){
-		const {dispatch,info,columns,groups} = this.props;
+		const {
+			dispatch
+		,	info
+		,	columns
+		,	groups
+		,	mode
+		} = this.props;
 		const {
 			containerProps
 		,	columnsProps
@@ -115,9 +81,10 @@ class Browser extends Component{
 						<Column {...column} {...columnProps} key={i}/>
 					)}
 				</LayoutColumns>
-				<LayoutInfoPane {...infoPaneProps}>
-					<InfoPane {...info}/>
-				</LayoutInfoPane>
+				<LayoutInfoPaneContainer {...infoPaneProps}>
+					<InfoPane {...info} dispatch={dispatch}/>
+				</LayoutInfoPaneContainer>
+				<Overlay {...mode} {...info} dispatch={dispatch}/>
 			</LayoutContainer>
 		)
 	}
