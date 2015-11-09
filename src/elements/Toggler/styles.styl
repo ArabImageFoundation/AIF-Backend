@@ -1,0 +1,23 @@
+.Toggler
+	width 100%
+	display block
+	padding .1em
+	padding-left .5em
+	text-decoration none
+	color #464646
+	cursor pointer
+
+.horizontal
+	&:before
+		content '◀'
+.vertical
+	&:before
+		content '▲'
+
+.isShowing
+	&.horizontal
+		&:before
+			content '▶'
+	&.vertical
+		&:before
+			content '▼'

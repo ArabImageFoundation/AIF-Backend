@@ -1,0 +1,49 @@
+.OverlayEditorTitle
+	width 100%
+	left 0
+	text-decoration none
+	display block
+	position absolute
+	top -2em
+	height 2em
+	line-height 2em
+	background #1F1F1F
+	color #fdfdfd
+	width 100%
+	text-align center
+
+.OverlayEditor
+	position absolute
+	width 100%
+	height 100%
+	box-sizing border-box
+	margin 0 auto
+	padding-bottom 8em
+	bottom -100%
+	transition bottom .3s ease-out
+
+.OverlayEditorInner
+	background #4C4C4C
+	width 30em
+	margin 0 auto
+	position relative
+	box-sizing border-box
+	padding 2em
+
+.field
+	padding .3em
+	background #6C6C6C
+	label
+		display inline-block
+		width 7em
+	input
+		border none
+		padding .3em
+		background #7D7272
+		&:focus
+			background #fdfdfd
+	&:nth-child(odd)
+		background #5B5A5A
+
+.show
+	bottom -5em

@@ -1,15 +1,5 @@
 import React,{Component,PropTypes} from 'react';
 
-import {
-	LayoutColumn
-,	LayoutColumnHeader
-,	LayoutColumnItems
-,	LayoutColumnItem
-,	LayoutColumns
-,	LayoutContainer
-,	LayoutInfoPane
-} from '../../Layout';
-
 export default class ItemGroup extends Component{
 	render(){
 		const {
@@ -21,15 +11,6 @@ export default class ItemGroup extends Component{
 		,	onClick
 		,	onDoubleClick
 		} = this.props;
-		const props = {
-			selected
-		,	type
-		,	marked
-		,	onClick
-		,	onDoubleClick
-		}
-		return (<LayoutColumnItem {...props}>
-			{path}
-		</LayoutColumnItem>)	
+		return (<span>{path}</span>)
 	}
 }

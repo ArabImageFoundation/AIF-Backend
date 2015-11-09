@@ -1,19 +1,14 @@
 import {connect} from 'react-redux';
 import {mapStateToProps} from '../reducers';
 import React,{Component} from 'react';
-import InfoPane from './InfoPane';
-import Column from './Column';
-import {
-	LayoutColumn
-,	LayoutColumnHeader
-,	LayoutColumnItems
-,	LayoutColumnItem
-,	LayoutColumns
-,	LayoutContainer
-,	LayoutInfoPaneContainer
-,	Overlay
-} from './Layout';
+import Container from './Container'
+import Columns from './Columns'
+import Column from './Column'
+import InfoPaneContainer from './InfoPaneContainer'
+import InfoPane from './InfoPane'
+import Overlay from './Overlay'
 import keyHandler from './keyHandler';
+import ActionTesterComponent from '../actions/ActionTesterComponent';
 
 function layoutProps(
 	{width,height,infoPaneWidth,infoPanePosition}
@@ -55,12 +50,15 @@ class Browser extends Component{
 	}
 	showInfoBox(){
 		const infoPanePosition = 0;
-		this.setState({infoPanePosition});	
+		this.setState({infoPanePosition});
 	}
 	updateDimensions = (width,height) => {
 		this.setState({width,height});
 	}
 	render(){
+		return (<ActionTesterComponent dispatch={this.props.dispatch}/>)
+	}
+	_render(){
 		const {
 			dispatch
 		,	info
@@ -75,17 +73,17 @@ class Browser extends Component{
 		,	infoPaneProps
 		} = layoutProps(this.state,this.props,this);
 		return (
-			<LayoutContainer {...containerProps}>
-				<LayoutColumns {...columnsProps}>
+			<Container {...containerProps}>
+				<Columns {...columnsProps}>
 					{columns && columns.map((column,i)=>
 						<Column {...column} {...columnProps} key={i}/>
 					)}
-				</LayoutColumns>
-				<LayoutInfoPaneContainer {...infoPaneProps}>
+				</Columns>
+				<InfoPaneContainer {...infoPaneProps}>
 					<InfoPane {...info} dispatch={dispatch}/>
-				</LayoutInfoPaneContainer>
+				</InfoPaneContainer>
 				<Overlay {...mode} {...info} dispatch={dispatch}/>
-			</LayoutContainer>
+			</Container>
 		)
 	}
 }

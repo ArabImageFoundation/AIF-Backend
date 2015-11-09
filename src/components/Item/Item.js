@@ -1,5 +1,7 @@
 import React,{Component,PropTypes} from 'react';
 import {selectItem,markItem,runItem} from '../../actions';
+import styles from './styles';
+import {classNames} from '../../utils';
 
 import ItemDirectory from './ItemDirectory';
 import ItemGroup from './ItemGroup';
@@ -48,11 +50,18 @@ export default class Item extends Component{
 		}
 	}
 	render(){
-		const {type} = this.props;
+		const {type,selected,marked} = this.props;
 		const Component = map[type] || ItemUnknown;
 		const {onClick,onDoubleClick} = this;
 		const name = (this.props.name || this.props.path || '').replace(/^\/|\/$/g,'').split('/').pop();
-		const props = Object.assign({},this.props,{onClick,onDoubleClick,name});
-		return (<Component {...props}/>)
+		const componentProps = Object.assign({},this.props,{name});
+		const props = {
+			className:classNames(styles,'Item',{selected,type,marked})
+		,	onClick
+		,	onDoubleClick
+		};
+		return (<div {...props}>
+			<Component {...componentProps}/>
+		</div>)
 	}
 }
