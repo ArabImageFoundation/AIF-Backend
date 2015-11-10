@@ -3,7 +3,7 @@ import {STATUS_NONE,STATUS_LOADED,STATUS_ERROR,STATUS_LOADING} from '../constant
 import {TYPE_UNKNOWN,TYPE_DIRECTORY,TYPE_FILE,TYPE_GROUP} from '../constants/types';
 import Promise from 'bluebird';
 
-function getLoadedFile({items},path){
+function getLoadedFile({data:{items}},path){
 	const item = items.get('path',path||'/');
 	const shouldLoad = (!item || item.status===STATUS_NONE || item.status===STATUS_ERROR)
 	return (shouldLoad ? false : item);
@@ -178,8 +178,8 @@ const actions = makeActionCreators({
 	}
 ,	selectCurrentItem:{
 		async:function selectCurrentItem(_,dispatch,getState,disp){
-			const state = getState();
-			const column = state.columns.find(col=>col.selected);
+			const {data:{columns}} = getState();
+			const column = columns.find(col=>col.selected);
 			if(!column){return}
 			const {selectedItemIndex,selectedItemType} = column;
 			const arr = column[selectedItemType];

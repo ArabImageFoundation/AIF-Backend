@@ -46,12 +46,14 @@ function createItem(props){
 }
 
 export default {
-	items:wrapArray([],['name','path','itemId'],createItem)
-,	columns:wrapArray([],['name','path','columnId'],createColumn).push({
-		position:0
-	,	type:TYPE_DIRECTORY
-	,	path:'/'
-	})
+	data:{
+		items:wrapArray([],['name','path','itemId'],createItem)
+	,	columns:wrapArray([],['name','path','columnId'],createColumn).push({
+			position:0
+		,	type:TYPE_DIRECTORY
+		,	path:'/'
+		})
+	}
 ,	mode:{
 		showOverlay:false
 	,	itemId:false

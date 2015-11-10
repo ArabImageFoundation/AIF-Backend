@@ -1,9 +1,12 @@
 export function mapStateToProps({
-	columns
-,	items
+	data:{columns,items}
+,	mode
+,	selection
 }){
 	return {
 		columns
 	,	items
+	,	mode
+	,	selection
 	}
 }
