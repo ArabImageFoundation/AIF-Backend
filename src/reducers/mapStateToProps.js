@@ -1,11 +1,9 @@
 export function mapStateToProps({
 	columns
-,	files
-,	groups
+,	items
 }){
 	return {
 		columns
-	,	files
-	,	groups
+	,	items
 	}
 }

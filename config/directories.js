@@ -9,4 +9,5 @@ module.exports = {
 ,	dist:rootDir+'public/'
 ,	src:rootDir+'src/'
 ,	views:rootDir+'views/'
+,	nodeModules:rootDir+'node_modules/'
 }

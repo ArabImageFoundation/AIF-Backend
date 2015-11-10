@@ -1,3 +1,1 @@
-export default {
-	isDev:true
-}
+export const isDev = true;

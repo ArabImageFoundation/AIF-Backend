@@ -1,7 +1,0 @@
-export {default as ButtonClose} from './ButtonClose'
-export {default as FieldSubmit} from './FieldSubmit'
-export {default as MessageError} from './MessageError'
-export {default as MessageLoading} from './MessageLoading'
-export {default as MessageUnknown} from './MessageUnknown'
-export {default as Thumbnail} from './Thumbnail'
-export {default as Toggler} from './Toggler'

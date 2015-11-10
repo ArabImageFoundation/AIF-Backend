@@ -7,7 +7,7 @@ import {isDev} from '../config/global';
 
 const store = configureStore(window.__INITIAL_STATE__);
 
-export default class Root extends Component{
+class Root extends Component{
 	render(){
 		return (<div style={{width:'100%',height:'100%'}}>
 			<Provider store={store}>
@@ -19,3 +19,5 @@ export default class Root extends Component{
 		</div>);
 	}
 };
+
+export default Root;

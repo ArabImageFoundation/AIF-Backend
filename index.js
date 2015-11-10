@@ -1,3 +1,2 @@
-require('babel/register')({optional: ['es7.objectRestSpread']});
+require('babel-core/register')
 require('./setUp')
-

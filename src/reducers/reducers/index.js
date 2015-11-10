@@ -1,12 +1,14 @@
 import {combineReducers} from 'redux';
 import columns from './columns';
-import files from './files';
-import groups from './groups'
+import items from './items';
+import mode from './mode';
+import selection from './selection'
 import initialState from './initialState'
 import {createReducer} from './utils';
 
 export default combineReducers({
 	columns:createReducer(initialState.columns,columns)
-,	files:createReducer(initialState.files,files)
-,	groups:createReducer(initialState.groups,groups)
+,	items:createReducer(initialState.items,items)
+,	mode:createReducer(initialState.mode,mode)
+,	selection:createReducer(initialState.selection,selection)
 });

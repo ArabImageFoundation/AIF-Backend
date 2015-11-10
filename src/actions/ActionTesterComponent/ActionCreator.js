@@ -1,5 +1,4 @@
 import React,{Component} from 'react'
-import actions from './index.js';
 
 function serialize(form) {
 	const s = {};
@@ -38,47 +37,66 @@ function serialize(form) {
 	return s;
 }
 
+function valueToField(id,name,defaultValue,dataType){
+	var component;
+	const type = dataType=='date'?'date':dataType=='number'?'number':'text';
+	const step = dataType=='number' && 1;
+	const props = {
+		name
+	,	id
+	,	type
+	,	step
+	,	"data-type":dataType
+	}
+	if(dataType == 'array' && defaultValue.length){
+		props['data-type'] = 'string'
+		component = (<select {...props}>
+			{defaultValue.map((val,k)=>
+				<option value={val} key={k}>{val}</option>
+			)}
+		</select>)
+	}else{
+		if(dataType == 'array'){
+			props.defaultValue = '';
+		}else{
+			props.defaultValue = defaultValue;
+		}
+		component = <input {...props}/>;
+	}
+	return (<div key={name}>
+		<label htmlFor={id} style={{width:'5em',display:'inline-block'}}>{name}</label>
+		{component}
+	</div>)
+}
+
+const onClick = (setState,isOpen) => (evt) =>{
+	evt.preventDefault();
+	setState({isOpen:!isOpen});
+}
+const onSubmit = (dispatch,actionCreator) => (evt) => {
+	evt.preventDefault();
+	var data = serialize(evt.target);
+	dispatch(actionCreator(data));
+}
 class ActionCreator extends Component{
 	constructor(props,context){
 		super(props,context);
 		this.state = {isOpen:false}
-	}
-	onClick = (evt)=>{
-		evt.preventDefault();
-		this.setState({isOpen:!this.state.isOpen});
-	}
-	onSubmit = (evt) => {
-		const {dispatch,actionCreator} = this.props;
-		evt.preventDefault();
-		var data = serialize(evt.target);
-		dispatch(actionCreator(data));
+		this._setState = this.setState.bind(this);
 	}
 	render(){
-		const {name,defaultAction} = this.props;
+		const {name,defaultAction,actionCreator,dispatch} = this.props;
 		const {isOpen} = this.state;
+		const {_setState} = this;
 		return (<div style={{borderBottom:'1px solid white',background:'#fdfdfd',color:'#222'}}>
-			<h4 onClick={this.onClick} style={{cursor:'pointer'}}>{name}</h4>
+			<h4 onClick={onClick(_setState,isOpen)} style={{cursor:'pointer'}}>{name}</h4>
 			<div style={{display:isOpen?'block':'none'}}>
-				<form onSubmit={this.onSubmit} name={defaultAction.type}>
+				<form onSubmit={onSubmit(dispatch,actionCreator)} name={defaultAction.type}>
 				{Object.keys(defaultAction.meta).map(name=>{
 					let defaultValue = defaultAction.meta[name];
 					const dataType = (Array.isArray(defaultValue))?'array':(defaultValue instanceof Date)? 'date':(typeof defaultValue);
-					if(dataType == 'array'){defaultValue = defaultValue.join(',');}
-					const type = dataType=='date'?'date':dataType=='number'?'number':'text';
-					const step = dataType=='number' && 1;
 					const id = defaultAction.type+name;
-					const props = {
-						name
-					,	id
-					,	type
-					,	defaultValue
-					,	step
-					,	"data-type":dataType
-					}
-					return (<div key={name}>
-						<label htmlFor={id} style={{width:'5em',display:'inline-block'}}>{name}</label>
-						<input {...props}/>
-					</div>)
+					return valueToField(id,name,defaultValue,dataType)
 				})}
 				<input type="submit" value="send"/>
 				</form>
@@ -87,22 +105,4 @@ class ActionCreator extends Component{
 	}
 }
 
-export default class ActionTesterComponent extends Component{
-	render(){
-		const {dispatch} = this.props;
-		return (<div>
-			{Object.keys(actions).map((name,key)=>{
-				const actionCreator = actions[name];
-				const {defaultAction} = actionCreator;
-				const props = {
-					key
-				,	name
-				,	defaultAction
-				,	dispatch
-				,	actionCreator
-				}
-				return (<ActionCreator {...props}/>)
-			})}
-		</div>)
-	}
-}
+export default ActionCreator;

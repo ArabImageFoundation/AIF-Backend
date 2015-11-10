@@ -3,16 +3,10 @@ import {STATUS_NONE,STATUS_LOADED,STATUS_ERROR,STATUS_LOADING} from '../constant
 import {TYPE_UNKNOWN,TYPE_DIRECTORY,TYPE_FILE,TYPE_GROUP} from '../constants/types';
 import Promise from 'bluebird';
 
-function getLoadedFile({files:{indexes,items}},path){
-	if(!path){path = '/'}
-	if(path in indexes){
-		if(
-			(items[indexes[path]].status == STATUS_NONE) ||
-			(items[indexes[path]].status == STATUS_ERROR)
-		){return false;}
-		return items[indexes[path]];
-	}
-	return false;
+function getLoadedFile({items},path){
+	const item = items.get('path',path||'/');
+	const shouldLoad = (!item || item.status===STATUS_NONE || item.status===STATUS_ERROR)
+	return (shouldLoad ? false : item);
 }
 
 function fetchFilesArray(dispatch,arr){
@@ -20,6 +14,15 @@ function fetchFilesArray(dispatch,arr){
 		return dispatch(actions.fetchFile({path}));
 	}
 	return Promise.each(arr,fetch)
+}
+
+function itemsToPaths(items){
+	return items.map(item=>
+		(typeof item === 'string')?item:
+		item.file && item.file.path?item.file.path:
+		item.path ? item.path :
+		false
+	).filter(Boolean)
 }
 
 const actions = makeActionCreators({
@@ -81,14 +84,14 @@ const actions = makeActionCreators({
 	}
 ,	fetchRootGroups:{
 		async: function fetchRootGroups(nothing,dispatch){
-				return dispatch(actions.fetchGroup({group:'root'}))
+				return dispatch(actions.fetchGroup({name:'root'}))
 			}
 	}
 ,	addFilesToGroup:{
 		group:''
 	,	files:[]
 	,	async: function addFilesToGroup({group,files}){
-			const url = `/browse/selection/add/${group}?files[]=`+files.map(item=>item.file.path).join('&files[]=');
+			const url = `/browse/selection/add/${group}?files[]=`+files.join('&files[]=');
 			return get(url);
 		}
 	}
@@ -96,21 +99,27 @@ const actions = makeActionCreators({
 		group:''
 	,	files:[]
 	,	async: function removeFilesFromGroup(group,files){
-			const url = `/browse/selection/remove/${group}?files[]=`+files.map(item=>item.file.path).join('&files[]=');
+			const url = `/browse/selection/remove/${group}?files[]=`+files.join('&files[]=');
+			return get(url);
+		}
+	}
+,	addGroupToGroup:{
+		group:''
+	,	async: function addGroupToGroup({group,child}){
+			const url = `/browse/selection/${group}?group[]=${child}`;
 			return get(url);
 		}
 	}
 ,	addGroupToRoot:{
 		group:''
 	,	async: function addGroupToRoot({group}){
-			const url = `/browse/selection/root?group[]=${group}`;
-			return get(url);
+			return dispatch(actions.addGroupToGroup({group:'root',group}));
 		}
 	}
 ,	addColumn:{
 		path:'/'
 	,	columnId:0
-	,	columnType:null
+	,	columnType:[TYPE_DIRECTORY,TYPE_FILE,TYPE_GROUP]
 	,	itemId:0
 	,	async: function addColumn({path,columnId,columnType,itemId},dispatch){
 			switch(columnType){
@@ -119,7 +128,7 @@ const actions = makeActionCreators({
 				case TYPE_FILE:
 					return dispatch(actions.fetchFile({path}))
 				case TYPE_GROUP:
-					return dispatch(actions.fetchGroup({path}))
+					return dispatch(actions.fetchGroup({name:path}))
 				default:
 					return Promise.reject(new Error(`column type \`${columnType}\` is not a recognized type`))
 			}
@@ -128,10 +137,10 @@ const actions = makeActionCreators({
 ,	runItem:{
 		path:'/'
 	,	columnId:0
-	,	columnType:null
+	,	columnType:[TYPE_DIRECTORY,TYPE_FILE,TYPE_GROUP]
 	,	itemId:0
 	,	async: function runItem({path,columnId,columnType,itemId},dispatch){
-			switch(type){
+			switch(columnType){
 				case TYPE_DIRECTORY:
 				case TYPE_FILE:
 				case TYPE_GROUP:
@@ -160,7 +169,22 @@ const actions = makeActionCreators({
 ,	selectColumn:{
 		columnId:0
 	}
-,	selectCurrentItem:{}
+,	selectItem:{
+		itemId:0
+	,	columnId:0
+	}
+,	sortColumnItems:{
+		by:['type','size','name','extension']
+	}
+,	selectCurrentItem:{
+		async:function selectCurrentItem(_,dispatch,getState,disp){
+			const state = getState();
+			const column = state.columns.find(col=>col.selected);
+			if(!column){return}
+			const {selectedItemIndex,selectedItemType} = column;
+			const arr = column[selectedItemType];
+		}
+	}
 ,	selectNextItem:{}
 ,	selectPreviousItem:{}
 ,	markItem:{
@@ -182,8 +206,8 @@ const actions = makeActionCreators({
 		columnId:0
 	,	filter:''
 	}
-,	showOverlayImage:{
-		image:0
+,	showOverlayItem:{
+		itemId:0
 	}
 ,	hideOverlay:{}
 ,	showOverlay:{}

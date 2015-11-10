@@ -7,6 +7,7 @@ var directories = require('../directories');
 var rootDir = directories.root;
 var distDir = directories.dist;
 var srcDir = directories.src;
+var modulesDir = directories.nodeModules;
 
 module.exports = {
 	context: rootDir
@@ -43,7 +44,7 @@ module.exports = {
 			{
 				test: /\.js$/
 			,	exclude: /node_modules/
-			,	loaders: ["babel-loader?optional[]=es7.decorators&optional[]=es7.classProperties"]
+			,	loaders: ["babel-loader?cacheDirectory&presets[]="+['es2015','react','stage-0'].join('&presets[]=')]
 			}
 		,	{
 				test: /\.styl$/
