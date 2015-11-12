@@ -2,6 +2,8 @@ import {makeActionCreators,get} from './utils'
 import {STATUS_NONE,STATUS_LOADED,STATUS_ERROR,STATUS_LOADING} from '../constants/statuses';
 import {TYPE_UNKNOWN,TYPE_DIRECTORY,TYPE_FILE,TYPE_GROUP} from '../constants/types';
 import Promise from 'bluebird';
+import PouchDB from 'pouchdb';
+var db = new PouchDB('items');
 
 function getLoadedFile({data:{items}},path){
 	const item = items.get('path',path||'/');
@@ -25,9 +27,32 @@ function itemsToPaths(items){
 	).filter(Boolean)
 }
 
-const actions = makeActionCreators({
+db.get('whatevz').then(doc=>{console.log(doc)})
+	.catch(err=>console.log(err))
+	.then(()=>console.log('ommak'))
 
-	fetchDirectory:{
+const actions = makeActionCreators({
+	addImages:{
+		group:''
+	,	files:[]
+	,	async:function({files,group}){
+			console.log(files);
+		}
+	}
+,	addItem:{
+		type:''
+	,	name:''
+	,	description:''
+	,	links:[]
+	,	async:function({type,name,description,links}){
+			const _id = `${type}_${name}`;
+			const item = {_id,name,links};
+			db.get(_id).then(doc=>{
+
+			})
+		}
+	}
+,	fetchDirectory:{
 		path:'/'
 	,	async: function fetchDirectory({path},dispatch,getState,disp){
 			path = path ? path.replace(/^\/|\/$/g,''): '';
@@ -120,7 +145,7 @@ const actions = makeActionCreators({
 		path:'/'
 	,	columnId:0
 	,	columnType:[TYPE_DIRECTORY,TYPE_FILE,TYPE_GROUP]
-	,	itemId:0
+	,	rowIndex:0
 	,	async: function addColumn({path,columnId,columnType,itemId},dispatch){
 			switch(columnType){
 				case TYPE_DIRECTORY:
@@ -169,14 +194,37 @@ const actions = makeActionCreators({
 ,	selectColumn:{
 		columnId:0
 	}
-,	selectItem:{
-		itemId:0
-	,	columnId:0
+,	dragOverColumn:{
+		columnId:0
 	}
-,	sortColumnItems:{
-		by:['type','size','name','extension']
+,	dragOutColumn:{
+		columnId:0
 	}
-,	selectCurrentItem:{
+,	dragOverRow:{
+		columnId:0
+	,	rowIndex:0
+	}
+,	dragOutRow:{
+		columnId:0
+	,	rowIndex:0
+	}
+,	setActiveRow:{
+		columnId:0
+	,	rowIndex:0
+	}
+,	selectRow:{
+		columnId:0
+	,	rowIndex:0
+	}
+,	deselectRow:{
+		columnId:0
+	,	rowIndex:0
+	}
+,	sortColumnRows:{
+		sortBy:['type','size','name','extension']
+	,	sortOrder:['ascending','descending']
+	}
+,	selectCurrentRow:{
 		async:function selectCurrentItem(_,dispatch,getState,disp){
 			const {data:{columns}} = getState();
 			const column = columns.find(col=>col.selected);
@@ -185,8 +233,17 @@ const actions = makeActionCreators({
 			const arr = column[selectedItemType];
 		}
 	}
-,	selectNextItem:{}
-,	selectPreviousItem:{}
+,	selectRowRange:{
+		columnId:0
+	,	selectedRowsStart:0
+	,	selectedRowsEnd:0
+	}
+,	selectNextRow:{
+		columnId:0
+	}
+,	selectPreviousRow:{
+		columnId:0
+	}
 ,	markItem:{
 		itemId:0
 	}

@@ -1,6 +1,11 @@
 import {STATUS_NONE,STATUS_LOADED,STATUS_ERROR,STATUS_LOADING,STATUS_PROCESSING} from '../../constants/statuses';
 import {TYPE_UNKNOWN,TYPE_DIRECTORY,TYPE_FILE,TYPE_GROUP} from '../../constants/types';
-import {assign,arrDiff} from './utils';
+import {
+	assign
+,	arrDiff
+,	processReceivedFile
+,	processReceivedGroup
+} from './utils';
 
 export default {
 	/******************************
@@ -61,6 +66,39 @@ export default {
 		};
 	}
 	/******************************
+			COLUMNS ROWS
+	*******************************/
+,	dragOverColumn({items,columns},{meta:{columnId,rowIndex}}){
+
+	}
+,	dragOutColumn({items,columns},{meta:{columnId,rowIndex}}){
+
+	}
+,	dragOverRow({items,columns},{meta:{columnId,rowIndex}}){
+
+	}
+,	dragOutRow({items,columns},{meta:{columnId,rowIndex}}){
+
+	}
+,	selectRowRange({items,columns},{meta:{columnId,selectedRowsStart,selectedRowsEnd}}){
+
+	}
+,	selectActiveRow({items,columns},{meta:{columnId,rowIndex}}){
+
+	}
+,	selectRow({items,columns},{meta:{columnId,rowIndex}}){
+
+	}
+,	deselectRow({items,columns},{meta:{columnId,rowIndex}}){
+
+	}
+,	selectNextRow({items,columns},{meta:{columnId,rowIndex}}){
+
+	}
+,	selectPreviousRow({items,columns},{meta:{columnId,rowIndex}}){
+
+	}
+	/******************************
 				ITEMS
 	*******************************/
 ,	markItem({items,columns},{meta:{itemId}}){
@@ -95,24 +133,17 @@ export default {
 ,	fetchDirectoryStart({items,columns},{meta:{path}}){
 		const status = STATUS_LOADING;
 		const type = TYPE_DIRECTORY
-		return {
-			items:updateItems(items,null,[path])
-		,	columns:columns.set(['path',path],{status,type})
-		}
+		return processReceivedFile(status,type,columns,items,null,[path])
 	}
 ,	fetchDirectoryProcessing({items,columns},{payload:{file,files},meta:{path}}){
 		const status = STATUS_PROCESSING;
-		return {
-			items:updateItems(items,file,files,file.groups)
-		,	columns:columns.set(['path',path],{status,file:file.path,files})
-		}
+		const type = TYPE_DIRECTORY
+		return processReceivedFile(status,type,columns,items,file,files,file.groups)
 	}
 ,	fetchDirectorySuccess({items,columns},{payload:{file,files},meta:{path}}){
 		const status = STATUS_LOADED;
-		return {
-			items:updateItems(items,file)
-		,	columns:columns.set(['path',path],{status,file,files})
-		}
+		const type = TYPE_DIRECTORY
+		return processReceivedFile(status,type,columns,items,file)
 	}
 ,	fetchDirectoryError({items,columns},{meta:{path}}){
 		const status = STATUS_ERROR
@@ -131,18 +162,12 @@ export default {
 ,	fetchFileStart({items,columns},{meta:{path}}){
 		const status = STATUS_LOADING;
 		const type = TYPE_FILE
-		return {
-			items:updateItems(items,null,[path])
-		,	columns:columns.set(['path',path],{status,type})
-		}
+		return processReceivedFile(status,type,columns,items,null,[path])
 	}
 ,	fetchFileSuccess({items,columns},{payload:{file},meta:{path}}){
 		const status = STATUS_LOADED;
 		const type = TYPE_FILE
-		return {
-			items:updateItems(items,file)
-		,	columns:columns.set(['path',path],{status,type})
-		}
+		return processReceivedFile(status,type,columns,items,file)
 	}
 ,	fetchFileError({items,columns},{payload:{file},meta:{path}}){
 		const status = STATUS_ERROR
@@ -162,38 +187,24 @@ export default {
 			GROUPS
 	*******************************/
 ,	addFilesToGroupSuccess({items,columns},{meta:{group,files}}){
-		return {
-			items:updateGroup(items,null,null,[group,files])
-		,	columns
-		}
+		const status = STATUS_LOADED;
+		return processReceivedGroup(status,columns,items,null,[group],files)
 	}
 ,	addGroupToGroupSuccess({items,columns},{meta:{group,child}}){
-		return {
-			items:updateGroup({items,columns},{name:group},[child])
-		,	columns
-		}
+		const status = STATUS_LOADED;
+		return processReceivedGroup(status,columns,items,{name:group},[child])
 	}
 ,	fetchGroupStart({items,columns},{meta:{name,columnId}}){
 		const status = STATUS_LOADING;
-		const type = TYPE_GROUP;
-		return {
-			items:updateGroup(items,null,[name])
-		,	columns:columns.set(['columnId',columnId],{status,type})
-		}
+		return processReceivedGroup(status,columns,items,null,[name])
 	}
 ,	fetchGroupProcessing({items,columns},{payload:{group},meta:{name}}){
 		const status = STATUS_PROCESSING;
-		return {
-			items:updateGroup(items,group,group.groups,group.files)
-		,	columns:columns.set(['name',name],{status})
-		}
+		return processReceivedGroup(status,columns,items,group,group.groups,group.files)
 	}
 ,	fetchGroupSuccess({items,columns},{payload:{group},meta:{name}}){
 		const status = STATUS_LOADED;
-		return {
-			items:updateGroup(items,group,group.groups,group.files)
-		,	columns:columns.set(['name',name],{status},{files:group.files,items:group.items})
-		}
+		return processReceivedGroup(status,columns,items,group,group.groups,group.files);
 	}
 ,	fetchGroupError({items,columns},{meta:{name}}){
 		const status = STATUS_ERROR
@@ -209,122 +220,4 @@ export default {
 		,	columns
 		};
 	}
-}
-
-function filterExistingPaths(has,dirname,files){
-	return files.filter(
-		path=>!has(path)
-	).map(path=>({
-		path
-	,	dirname
-	,	status:STATUS_NONE
-	}))
-}
-
-function filterExistingNames(has,groups){
-	return groups.filter(
-		name=>!has(name)
-	).map(name=>({
-		name
-	,	status:STATUS_NONE
-	,	type:TYPE_GROUP
-	}))
-}
-
-function updateItemChildrenType(item,propName,newItems){
-	const oldItems = item[propName];
-	if(!newItems || !newItems.length){return oldItems;}
-	const itemsDiff = arrDiff(oldItems,files);
-	if(itemsDiff.length){
-		const items = [...oldItems,itemsDiff];
-		return {[propName]:items};
-	}
-	return oldItems;
-}
-
-function updateItem(oldItem,newItem){
-	var item = {}, changed = false;
-	Object.keys(newItem).forEach(key=>{
-		var oldValue = oldItem[key], newValue, value;
-		if(key=='files'){
-			newValue = updateItemChildrenType(oldItem,'files',item.files);
-		}else if(key=='groups'){
-			newValue = updateItemChildrenType(oldItem,'groups',item.groups);
-		}else{
-			newValue = newItem[key];
-		}
-		if(oldValue!==newValue && (key in newItem)){
-			changed = true;
-			value = newValue;
-		}else{value=oldValue;}
-		item[key] = value;
-	})
-	return changed ? item : oldItem;
-}
-
-function updateItems(items,file,files,groups){
-	const hasFiles = files && files.length;
-	const hasGroups = groups && groups.length;
-	const hasPath = items.has('path');
-	const hasGroup = items.has('name');
-	if(hasFiles){
-		const newFiles = filterExistingPaths(hasPath,file && file.path || '',files);
-		items = (newFiles.length && items.concat(newFiles)) || items;
-	}
-	if(hasGroups){
-		const newGroups = filterExistingNames(hasGroup,groups)
-		items = (newGroups.length && items.concat(newGroups)) || items;
-	}
-	if(file){
-		const {path,dirname,isDirectory,isFile} = file;
-		const type = isDirectory ? TYPE_DIRECTORY : isFile ? TYPE_FILE : TYPE_UNKNOWN;
-		const status = status || STATUS_LOADED;
-		const item = assign(file,{type,status},hasFiles?{files}:null);
-		if(hasPath(path)){
-			const oldItem = items.get('path',path);
-			const updatedItem = updateItem(oldItem,item);
-			if(updatedItem!==oldItem){
-				items = items.set(['path',path],updatedItem);
-			}
-		}else{
-			items = items.push(item);
-		}
-		const parent = dirname && items.get('path',dirname);
-		if(parent && (!parent.files || parent.files.indexOf(path)<0)){
-			const files = parent.files ? [...parent.files,path] : [path];
-			items = items.set(['path',dirname],{files});
-		}
-	}
-	return items;
-}
-
-function updateGroup(items,group,groups,files){
-	const hasFiles = files && files.length;
-	const hasGroups = groups && groups.length;
-	const hasPath = items.has('path');
-	const hasGroup = items.has('name');
-	if(hasFiles){
-		const newFiles = filterExistingPaths(hasPath,'',files)
-		items = (newFiles.length && items.concat(newFiles)) || items
-	}
-	if(hasGroups){
-		const newGroups = filterExistingNames(hasGroup,groups)
-		items = (newGroups.length && items.concat(newGroups)) || items;
-	}
-	if(group){
-		const {name} = group;
-		const type = TYPE_GROUP;
-		const status = STATUS_LOADED;
-		const item = assign(group,{type,status});
-		if(hasGroup(name)){
-			const oldItem = items.get('name',name);
-			const updatedItem = updateItem(oldItem,item);
-			if(updatedItem!==oldItem){
-				items = items.set(['name',name],updatedItem);
-			}
-		}else{
-			items = items.push(item);
-		}
-	}
-	return items;
 }

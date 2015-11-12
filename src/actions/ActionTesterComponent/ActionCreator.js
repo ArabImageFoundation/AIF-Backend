@@ -4,10 +4,14 @@ function serialize(form) {
 	const s = {};
 	const {length} = form.elements;
 	for(let i=0;i<length;i++){
-		let field = form.elements[i];
+		const field = form.elements[i];
 		const {name,type} = field;
 		const dataType = field.dataset.type;
-		if(!name || field.disabled || /file|reset|submit|button/i.test(type)){continue;}
+		if(!name || field.disabled || /reset|submit|button/i.test(type)){continue;}
+		if(dataType=='file' || dataType=='file-multiple'){
+			s[name] = field.files;
+			continue;
+		}
 		if(type == 'select-multiple'){
 			let j = field.options.length;
 			s[name] = [];
@@ -39,13 +43,15 @@ function serialize(form) {
 
 function valueToField(id,name,defaultValue,dataType){
 	var component;
-	const type = dataType=='date'?'date':dataType=='number'?'number':'text';
+	const type = dataType=='date'?'date':dataType=='number'?'number':(dataType=='file' || dataType=='file-multiple')?'file':'text';
 	const step = dataType=='number' && 1;
+	const multiple = dataType == 'file-multiple'
 	const props = {
 		name
 	,	id
 	,	type
 	,	step
+	,	multiple
 	,	"data-type":dataType
 	}
 	if(dataType == 'array' && defaultValue.length){
@@ -92,9 +98,17 @@ class ActionCreator extends Component{
 			<h4 onClick={onClick(_setState,isOpen)} style={{cursor:'pointer'}}>{name}</h4>
 			<div style={{display:isOpen?'block':'none'}}>
 				<form onSubmit={onSubmit(dispatch,actionCreator)} name={defaultAction.type}>
-				{Object.keys(defaultAction.meta).map(name=>{
-					let defaultValue = defaultAction.meta[name];
-					const dataType = (Array.isArray(defaultValue))?'array':(defaultValue instanceof Date)? 'date':(typeof defaultValue);
+				{Object.keys(defaultAction.meta).sort().map(name=>{
+					const defaultValue = defaultAction.meta[name];
+					const isArray = Array.isArray(defaultValue);
+					const dataType = (name=='file' || name=='files')?
+						(isArray ? 'file' : 'file-multiple') :
+						(isArray)?
+							'array' :
+							(defaultValue instanceof Date)?
+								'date':
+								(typeof defaultValue)
+					;
 					const id = defaultAction.type+name;
 					return valueToField(id,name,defaultValue,dataType)
 				})}

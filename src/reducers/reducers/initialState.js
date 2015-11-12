@@ -5,7 +5,7 @@ import Indexed from 'indexed';
 const {wrapArray} = Indexed;
 
 var columnIds = 0;
-export const defaultColumn = {
+const defaultColumn = {
 	columnId:0
 ,	position:0
 ,	status:STATUS_NONE
@@ -13,15 +13,18 @@ export const defaultColumn = {
 ,	objectId:false
 ,	info:false
 ,	type:TYPE_UNKNOWN
-,	selectedItemIndex:0
-,	selectedItemType:null
+,	activeRowIndex:0
+,	selectedRowsStart:0
+,	selectedRowsEnd:0
 ,	selected:true
 ,	filter:''
+,	sortBy:'type'
+,	sortOrder:'descending'
 ,	showFilter:false
-,	items:wrapArray([])
+,	rows:new Set()
 }
 var itemIds = 0;
-export const defaultItem = {
+const defaultItem = {
 	itemId:0
 ,	status:STATUS_NONE
 ,	path:false
@@ -29,8 +32,24 @@ export const defaultItem = {
 ,	type:TYPE_UNKNOWN
 }
 
+
+const rowIndentifiers = new Map();
+
 function getColumnId(){
 	return ''+(columnIds++);
+}
+function getIdentifier(row){
+	var identifier;
+	if(typeof row == 'string'){identifier = row;}
+	else if('path' in row){identifier = row.path || '/';}
+	else if('name' in row){identifier = row.name};
+	var finalIdentifier = identifier
+	var n = 0;
+	while(rowIndentifiers.has(finalIdentifier)){
+		finalIdentifier = identifier+(n++);
+	}
+	rowIndentifiers.set(finalIdentifier,true);
+	return [finalIdentifier,identifier];
 }
 
 function getItemId(){
@@ -41,13 +60,18 @@ function createColumn(props){
 	return assign(defaultColumn,props,(props && 'columnId' in props)?null:{columnId:getColumnId()});
 }
 
-function createItem(props){
-	return assign(defaultItem,props,(props && 'itemId' in props)?null:{itemId:getItemId()});
+
+export function createItem(props){
+	const isString = (typeof props == 'string');
+	const itemId = (props && !isString && ('itemId' in props))? props.itemId : getItemId();
+	const identifier = (props && !isString && ('identifier' in props))? props.identifier : getIdentifier(props);
+	const size = (props && !isString && ('size' in props))? props.size : 0;
+	return assign(defaultItem,props,{itemId,identifier,size});
 }
 
 export default {
 	data:{
-		items:wrapArray([],['name','path','itemId'],createItem)
+		items:wrapArray([],['name','path','itemId','identifier'])
 	,	columns:wrapArray([],['name','path','columnId'],createColumn).push({
 			position:0
 		,	type:TYPE_DIRECTORY
