@@ -1,5 +1,5 @@
-import {STATUS_NONE,STATUS_LOADED,STATUS_ERROR,STATUS_LOADING} from '../../constants/statuses';
-import {TYPE_UNKNOWN,TYPE_DIRECTORY,TYPE_FILE,TYPE_GROUP} from '../../constants/types';
+import {STATUS_NONE,STATUS_LOADED,STATUS_ERROR,STATUS_LOADING} from '../constants/statuses';
+import {TYPE_UNKNOWN,TYPE_DIRECTORY,TYPE_FILE,TYPE_GROUP} from '../constants/types';
 import {assign} from './utils';
 import Indexed from 'indexed';
 const {wrapArray} = Indexed;
@@ -70,22 +70,25 @@ export function createItem(props){
 }
 
 export default {
-	data:{
-		items:wrapArray([],['name','path','itemId','identifier'])
-	,	columns:wrapArray([],['name','path','columnId'],createColumn).push({
-			position:0
-		,	type:TYPE_DIRECTORY
-		,	path:'/'
-		})
-	}
+	columns:[
+		{
+			columnId:0
+		,	type:'group'
+		,	name:'root'
+		,	id:'group_root'
+		,	status:STATUS_NONE
+		}
+	]
+,	items:new Map()
+,	types:new Map()
+,	messages:[]
 ,	mode:{
 		showOverlay:false
-	,	itemId:false
 	}
 ,	selection:{
-		files:[]
-	,	groups:[]
+		selectedItems:[]
 	,	summary:{}
-	,	columnId:0
+	,	item:false
+	,	index:0
 	}
 }

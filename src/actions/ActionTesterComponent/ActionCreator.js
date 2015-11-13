@@ -27,7 +27,11 @@ function serialize(form) {
 			s[name] = field.options[field.selectedIndex];
 			continue;
 		}
-		if(type == 'checkbox' || type == 'radio'){
+		if(type == 'checkbox'){
+			s[name] = field.checked;
+			continue;
+		}
+		if(type == 'radio'){
 			s[name] = s[name] || [];
 			s[name].push(field.checked);
 			continue;
@@ -43,9 +47,9 @@ function serialize(form) {
 
 function valueToField(id,name,defaultValue,dataType){
 	var component;
-	const type = dataType=='date'?'date':dataType=='number'?'number':(dataType=='file' || dataType=='file-multiple')?'file':'text';
+	const type = dataType=='date'?'date':dataType=='number'?'number':(dataType=='file' || dataType=='file-multiple')?'file':dataType=='boolean'?'checkbox':'text';
 	const step = dataType=='number' && 1;
-	const multiple = dataType == 'file-multiple'
+	const multiple = (dataType == 'file-multiple')
 	const props = {
 		name
 	,	id
@@ -54,7 +58,11 @@ function valueToField(id,name,defaultValue,dataType){
 	,	multiple
 	,	"data-type":dataType
 	}
-	if(dataType == 'array' && defaultValue.length){
+	if(dataType == 'boolean'){
+		props['defaultChecked'] = defaultValue;
+		component = <input {...props}/>
+	}
+	else if(dataType == 'array' && defaultValue.length){
 		props['data-type'] = 'string'
 		component = (<select {...props}>
 			{defaultValue.map((val,k)=>
@@ -102,7 +110,7 @@ class ActionCreator extends Component{
 					const defaultValue = defaultAction.meta[name];
 					const isArray = Array.isArray(defaultValue);
 					const dataType = (name=='file' || name=='files')?
-						(isArray ? 'file' : 'file-multiple') :
+						(isArray ? 'file-multiple' : 'file') :
 						(isArray)?
 							'array' :
 							(defaultValue instanceof Date)?

@@ -1,5 +1,12 @@
 import React,{Component,PropTypes} from 'react';
-import {selectItem,markItem,runItem} from '../../actions';
+import actions from '../../actions';
+const {
+	setActiveRow
+,	markItem
+,	unmarkItem
+,	toggleItemMarking
+,	addColumn
+} = actions
 import styles from './styles';
 import {classNames} from '../../utils';
 
@@ -15,53 +22,31 @@ import{
 ,	TYPE_GROUP
 } from '../../constants/types';
 
-
-const map = {
-	[TYPE_DIRECTORY]:ItemDirectory
-,	[TYPE_FILE]:ItemFile
-,	[TYPE_GROUP]:ItemGroup
+const onDoubleClick = (dispatch,columnId,id) => (evt) => {
+	evt.preventDefault();
+	dispatch(addColumn({columnId,id}));
+}
+const onClick = (dispatch,columnId,id) => (evt) => {
+	evt.preventDefault();
+	const ctrl = evt.ctrlKey;
+	if(ctrl){
+		dispatch(toggleItemMarking({id}))
+	}else{
+		dispatch(setActiveRow({columnId,activeRowIndex:id}))
+	}
 }
 
+
 module.exports = class Item extends Component{
-	onDoubleClick = (evt) => {
-		evt.preventDefault();
-		const {
-			dispatch
-		,	columnId
-		,	id
-		,	type
-		,	path
-		} = this.props
-		dispatch(runItem(path,columnId,type,null,id));
-	}
-	onClick = (evt) => {
-		evt.preventDefault();
-		const ctrl = evt.ctrlKey;
-		const {
-			dispatch
-		,	columnId
-		,	id
-		,	type
-		} = this.props
-		if(ctrl){
-			dispatch(markItem(columnId,id))
-		}else{
-			dispatch(selectItem(columnId,id))
-		}
-	}
 	render(){
-		const {type,selected,marked} = this.props;
-		const Component = map[type] || ItemUnknown;
-		const {onClick,onDoubleClick} = this;
-		const name = (this.props.name || this.props.path || '').replace(/^\/|\/$/g,'').split('/').pop();
-		const componentProps = Object.assign({},this.props,{name});
+		console.log(this.props);
+		const {marked,dispatch,columnId,selected} = this.props;
+		const {type,_id:id,name} = this.props.doc;
 		const props = {
 			className:classNames(styles,'Item',{selected,type,marked})
-		,	onClick
-		,	onDoubleClick
+		,	onClick:onClick(dispatch,columnId,id)
+		,	onDoubleClick:onDoubleClick(dispatch,columnId,id)
 		};
-		return (<div {...props}>
-			<Component {...componentProps}/>
-		</div>)
+		return (<div {...props}>{name}</div>)
 	}
 }

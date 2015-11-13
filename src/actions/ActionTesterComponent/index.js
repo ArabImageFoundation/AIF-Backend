@@ -1,13 +1,14 @@
 import React,{Component} from 'react'
-import actions from '../index.js';
+import actions from '../actions.js';
 import ActionCreator from './ActionCreator';
 
+const {actionsCreators} = actions;
 class ActionTesterComponent extends Component{
 	render(){
 		const {dispatch} = this.props;
 		return (<div>
-			{Object.keys(actions).map((name,key)=>{
-				const actionCreator = actions[name];
+			{Object.keys(actionsCreators).map((name,key)=>{
+				const actionCreator = actionsCreators[name];
 				const {defaultAction} = actionCreator;
 				const props = {
 					key

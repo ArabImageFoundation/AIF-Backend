@@ -25,8 +25,8 @@ module.exports = class OverlayEditor extends Component{
 		const {show} = this.state;
 
 		const {
-			groups
-		,	files
+			item
+		,	items
 		,	dispatch
 		} = this.props;
 
@@ -41,9 +41,9 @@ module.exports = class OverlayEditor extends Component{
 					<Field name="Tags"/>
 					<Field name="Shelve"/>
 				</div>
-				<GroupsPane {...{groups,files,dispatch}}/>
 				<div style={{clear:'both'}}/>
 			</div>
 		</div>)
 	}
 }
+				//<GroupsPane {...{groups,files,dispatch}}/>

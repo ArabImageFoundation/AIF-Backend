@@ -14,21 +14,16 @@ export function renderHeader(headerHeight,onFilter,closeColumn,{id,filter,type,i
 	return (<ColumnHeader {...props}/>);
 }
 
-export function makeItem(item,key,dispatch,columnId){
-	const props = Object.assign(
-		{}
-	,	item
-	,	{
-			dispatch
-		,	key
-		,	columnId
-		}
-	);
-	return <Item {...props}/>
-}
-
-export function renderItems(items,{dispatch,id}){
-	return (items && items.map((item,key)=>makeItem(item,key,dispatch,id))) || false
+export function renderItems(rows,selectedRows,activeRowIndex,items,{dispatch,columnId}){
+	return rows && rows.map((row,rowId)=>{
+		const selected = selectedRows.indexOf[rowId]>=0;
+		const active = activeRowIndex == rowId;
+		const {type,id} = row;
+		const item = items.has(type) && items.get(type).get(row.id);
+		if(!item){return null;}
+		const props = Object.assign({},item,{dispatch,rowId,columnId,selected,active,key:id})
+		return (<Item {...props}/>)
+	})
 }
 
 export function getHeaderHeight(height){

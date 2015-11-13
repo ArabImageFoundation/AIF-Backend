@@ -1,32 +1,33 @@
 import React,{Component} from 'react';
 import styles from './styles';
 import {classNames} from '../../utils';
-import {hideOverlay,showImage} from '../../actions'
+import {hideOverlay,showNextOverlayItem,showPreviousOverlayItem,showCurrentOverlayItem} from '../../actions'
 import OverlayEditor from '../OverlayEditor';
 
+const onDismiss = (dispatch) => (evt) =>{
+	evt.preventDefault();
+	dispatch(hideOverlay());
+}
+const showNext = (dispatch) => (evt) =>{
+	evt.preventDefault();
+	dispatch(showNextOverlayItem);
+}
+const showPrevious = (dispatch) => (evt)=>{
+	evt.preventDefault();
+	dispatch(showPreviousOverlayItem);
+}
+
 module.exports = class Overlay extends Component{
-	onDismiss = (evt) =>{
-		evt.preventDefault();
-		const {dispatch} = this.props;
-		dispatch(hideOverlay());
+	constructor(props,context){
+		super(props,context);
+		const {dispatch} = props;
+		this.onDismiss = onDismiss(dispatch);
+		this.showNext = showNext(dispatch);
+		this.showPrevious = showPrevious(dispatch);
 	}
-	showNext = (evt) =>{
-		evt.preventDefault();
-		const {dispatch,imageIndex,images} = this.props;
-		const nextIndex = imageIndex+1;
-		if(nextIndex<images.length){
-			dispatch(showImage(nextIndex));
-		}
-	}
-	showPrevious = (evt)=>{
-		evt.preventDefault();
-		const {dispatch,imageIndex,images} = this.props;
-		const nextIndex = imageIndex-1;
-		if(nextIndex>-1){
-			dispatch(showImage(nextIndex));
-		}
-	}
-	renderImage(index,images){
+	renderImage(item){
+		console.log('item to render',item);
+		return 'ba3';
 		var style = {};
 		if(index>=0){
 			const image = images[index];
@@ -44,8 +45,8 @@ module.exports = class Overlay extends Component{
 		return <div {...props}/>
 	}
 	renderNext(){
-		const {imageIndex,images} = this.props;
-		if(imageIndex==images.length-1){return false;}
+		const {index,selectedItems} = this.props;
+		if(index>=selectedItems.length-1){return false;}
 		const props = {
 			onClick:this.showNext
 		,	className:styles.next
@@ -53,8 +54,8 @@ module.exports = class Overlay extends Component{
 		return <div {...props}/>
 	}
 	renderPrevious(){
-		const {imageIndex,images} = this.props;
-		if(imageIndex==0){return false;}
+		const {index,selectedItems} = this.props;
+		if(index==0){return false;}
 		const props = {
 			onClick:this.showPrevious
 		,	className:styles.previous
@@ -64,21 +65,21 @@ module.exports = class Overlay extends Component{
 	render(){
 		const {
 			showOverlay
-		,	imageIndex
-		,	images
-		,	groups
-		,	files
+		,	index
+		,	selectedItems
+		,	item
+		,	items
 		,	dispatch
 		} = this.props;
 		const props = {
 			className:classNames(styles,'Overlay',{showOverlay})
 		};
 		return (<div {...props}>
-			{this.renderImage(imageIndex,images)}
+			{this.renderImage(item)}
 			{this.renderNext()}
 			{this.renderPrevious()}
 			{this.renderCloseButton()}
-			<OverlayEditor {...{groups,files,dispatch}}/>
+			<OverlayEditor {...{item,items,dispatch}}/>
 		</div>)
 	}
 }

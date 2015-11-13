@@ -8,6 +8,7 @@ const props = {
 
 module.exports = class InfoPaneContainer extends Component{
 	render(){
+		return (<div>ommak</div>)
 		const {width,children,toggle,position} = this.props;
 		const isShowing = position == 0;
 		const buttonText = isShowing ? 'hide' : 'show';

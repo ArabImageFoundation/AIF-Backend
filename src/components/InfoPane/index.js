@@ -10,6 +10,7 @@ function renderProp(name,prop){
 
 module.exports = class InfoPane extends Component{
 	render(){
+		return (<div>ommak</div>)
 		const {
 			size
 		,	groups

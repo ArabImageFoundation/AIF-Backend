@@ -1,5 +1,5 @@
 import {connect} from 'react-redux';
-import {mapStateToProps} from '../reducers';
+import mapStateToProps from '../actions/mapStateToProps';
 import React,{Component} from 'react';
 import Container from './Container'
 import Columns from './Columns'
@@ -12,14 +12,14 @@ import ActionTesterComponent from '../actions/ActionTesterComponent';
 
 function layoutProps(
 	{width,height,infoPaneWidth,infoPanePosition}
-,	{dispatch,mode}
+,	{dispatch,mode,items}
 ,	{_setState}
 ){
 	return {
 		containerProps:{
 			width
 		,	height
-		,	update:updateDimensions(_setState)
+		,	update:handleUpdateDimensions(_setState)
 		,	onKeyDown:handleKeyDown(dispatch,mode)
 		}
 	,	columnsProps:{
@@ -33,11 +33,12 @@ function layoutProps(
 	,	columnProps:{
 			height
 		,	dispatch
+		,	items
 		}
 	}
 }
 
-const handleKeyDown = (dispatch,mode) => (evt) ={
+const handleKeyDown = (dispatch,mode) => (evt)=>{
 	//keyHandler(dispatch,evt,mode)
 }
 const toggleInfoBox = (setState,infoPanePosition,infoPaneWidth) => (evt) => {
@@ -58,16 +59,17 @@ class Browser extends Component{
 		}
 		this._setState = this.setState.bind(this);
 	}
-	render(){
+	_render(){
 		return (<ActionTesterComponent dispatch={this.props.dispatch}/>)
 	}
-	_render(){
+	render(){
 		const {
 			dispatch
-		,	info
-		,	columns
-		,	groups
+		,	selection
+		,	items
+		,	messages
 		,	mode
+		,	columns
 		} = this.props;
 		const {
 			containerProps
@@ -83,9 +85,9 @@ class Browser extends Component{
 					)}
 				</Columns>
 				<InfoPaneContainer {...infoPaneProps}>
-					<InfoPane {...info} dispatch={dispatch}/>
+					<InfoPane {...selection} dispatch={dispatch}/>
 				</InfoPaneContainer>
-				<Overlay {...mode} {...info} dispatch={dispatch}/>
+				<Overlay {...mode} {...selection} dispatch={dispatch}/>
 			</Container>
 		)
 	}
